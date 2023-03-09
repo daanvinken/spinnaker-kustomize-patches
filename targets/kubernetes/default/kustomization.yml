@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+resources:
+  - service-account.yml
+
+patchesStrategicMerge:
+  - provider.yml
+
+transformers:
+  - tfr-namespace-roles.yml
+
+configurations:
+  - service-account-bindings.yml
+
+# This document is required in Kubernetes v1.24+ as secrets are not generated
+# automatically for service accounts.
+secretGenerator:
+  - name: spin-sa-token
+    type: "kubernetes.io/service-account-token"
+    options:
+      annotations:
+        kubernetes.io/service-account.name: spin-sa
